@@ -35,26 +35,26 @@ Tipos de Texto/Fecha
 Las declaraciones DDL o Data Definition Language corresponden a aquellas que intervienen de alguna manera el esquema de la BBDD o manipulan nuevos objetos adyacentes a las tablas. Las declaraciones DDL suelen empezar con un comando `CREATE` en caso de que se crean objetos, `ALTER` para modificarlos y `DROP` para borrarlos.
 
 Por ejemplo:
-``
+```
 CREATE TABLE mitabla (campo1 tipo1, campo2 tipo2 ... )
 DROP TABLE mitabla 
-``
+```
 ALTER TABLE cambia la estructura de una tabla. Por ejemplo, puede agregar o eliminar columnas, crear o borrar índices, cambiar el tipo de columnas existentes o cambiar el nombre de las columnas o de la tabla en sí.
 
 Ejemplo de agregar nueva columna:
-``
+```
     ALTER TABLE mitabla
     ADD camponuevo tipo
-``
+```
 También puede ir acompañado de borrar columnas:
-``
+```
 ALTER TABLE mitabla DROP COLUMN nombre_columna1, DROP COLUMN nombre_columna2...
-``
+```
 Para borrar una tabla, usar comando DROP TABLE. Para vaciar usar TRUNCATE TABLE:
-``
+```
     DROP TABLE nombre-tabla 
     TRUNCATE TABLE nombre-tabla
-``
+```
 Ojo: operaciones CREATE/ALTER/DROP requieren permisos de escritura
 
 ## Inserción de registros y populating
@@ -72,7 +72,7 @@ Es decir, se cargan una lista de campos determinados (que pueden ser todos) y su
 ## Sintaxis básica de SQL
 SQL utiliza una sintaxis similar a otros lenguajes de programación, compuesta por palabras clave, operadores y expresiones. Las sentencias SQL suelen estar compuestas por cláusulas como SELECT, FROM, WHERE, ORDER BY y GROUP BY, y se terminan con un punto y coma (;).
 
-``
+```
     --Sintaxis consulta
     SELECT campo1, campo2, ...
     FROM tabla
@@ -80,7 +80,7 @@ SQL utiliza una sintaxis similar a otros lenguajes de programación, compuesta p
     ORDER BY campo1 ASC/DESC
     --Seleccionar toda una tabla
     SELECT * FROM tabla
-``  
+```  
 
 ## Sentencia SELECT
 La sentencia SELECT se utiliza para recuperar datos de una o más tablas. Suele estar compuesta por la palabra clave SELECT, seguida de una lista de columnas a recuperar, y la cláusula FROM, que especifica la tabla o tablas de las que recuperar los datos.
