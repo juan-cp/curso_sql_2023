@@ -1,67 +1,20 @@
 
-# CLASE 1 - Introducción a las bases de datos
+# Clase 1: Introducción a SQL
 
-Una Base de datos es un conjunto de datos pertenecientes a un mismo contexto y almacenados metodologicamente para su uso a futuro. Actualmente gracias al desarrollo tecnologico que se esta dando y a la gran cantidad de datos que se tienen, han surgido varias soluciones al almacenamiento de datos. Dichas soluciones se conocen formalmente como sistemas de gestion de bases de datos, o DBMS por sus siglas en inglés. Estos sistemas permiten gestionar las bases de datos, sus sub-componentes como tablas o consultas, y utilizan un lenguaje estándar de consulta llamado SQL que significa "Lenguaje estructurado de consultas (Structured Query Language)" Los principales Motores de bases que estan en el mercado son: ORACLE, MySQL, SQL Server, PostGreSQL, SQLite.
+## ¿Qué es SQL?
 
-Nota: las bases de datos más usadas en el mercado: https://db-engines.com/en/ranking/relational+dbms
+SQL significa Structured Query Language (Lenguaje de Consulta Estructurado) y es un lenguaje de programación utilizado para administrar bases de datos relacionales. SQL te permite realizar diversas operaciones en los datos almacenados en las bases de datos, como consultas, inserciones, actualizaciones y eliminaciones de datos.
 
-## Instalación de DBMS en máquina local
+## Bases de datos relacionales y tablas
 
-Los sistemas DBMS funcionan con un paradigma **cliente-servidor**, el cual es ampliamente frecuente en sistemas computacionales.
+Una base de datos relacional es un tipo de base de datos que almacena los datos en tablas. Una tabla está compuesta por filas y columnas, donde cada columna representa un tipo de datos diferente, y cada fila representa un solo registro. 
 
-En este caso, por medio de la instalación de SQL Server lo que haremos será transformar nuestro PC local en un servidor de SQL (vale la pena repetir: local y además limitado a las capacidades de nuestro PC). Para hacer peticiones a este servidor, instalaremos un programa de gestión de base de datos que actuará como cliente; es decir, en nuestro PC tendremos el servidor y el cliente instalado a la vez.
-
-Para este curso usaremos como servidor el SQL Server de Microsoft, y como clientes podremos usar SQL Server Management Studio (SSMS) o Azure Data Studio, los cuales procederemos a explicar su instalación en el PC local.
-
-### Instalación de SQL Server + SQL Server Management Studio.
-
-1. Lo primero que haremos será transformar nuestro PC en un servidor local de SQL. Para ello descargamos de https://www.microsoft.com/es-es/sql-server/sql-server-downloads la versión Express de SQL Server. 
-2. Abrimos el archivo descargado y seleccionamos la opción "Básica" de instalación. Aceptamos los términos de la licencia y seguimos el proceso de instalación con la opción "siguiente".
-3. El instalador empezará a descargar e instalar la plataforma. Asegurarse de tener una conexión estable para que el instalador
-proceda sin inconvenientes. Cuando el instalador haya terminado aparecerá en la ventana "Installation has completed successfully".
-4. Se nos dá la opción de instalar SSMS inmediatamente, lo podemos hacer pulsando el botón "Install SSMS" que nos llevará a la página de descarga, y seguir de manera manual las instrucciones.
-5. *SSMS*: Descargamos el programa desde aquí : https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15 
-6. Se iniciará la descarga del SQL Server Management Studio (archivo de más de 600 MB) Aceptamos los términos de la licencia y procedemos a instalar. 7. Al abrir SSMS nos aparecerá un dialog titulado "connect to server": en este establecemos la conexión al servidor anteriormente instalado. Importante que el programa reconozca como nombre del servidor el PC local, ya que eso indica que reconoce una instancia local de SQL server (instalada anteriormente según la primera parte de este documento). De ser así, basta con autenticación de Windows (en Authentication) para poder conectarse al servidor local.
-8. Al presionar "Connect" ya estamos exitosamente conectados al servidor local de SQL y podremos trabajar en las actividades del curso.
-
-### Alternativa: Azure data Studio
-
-1. Ingresamos al sitio de descarga de Azure Data Studio: https://learn.microsoft.com/en-us/sql/azure-data-studio/download-azure-data-studio?view=sql-server-ver15  y bajamos la versión correspondiente a nuestro sistema.
-2. Abrimos el instalador y se comenzará a instalar el programa.
-3. Una vez instalado debemos crear una conexión con nuestro servidor local de SQL Server. Para ello en la ventana bienvenida de Azure
-Data Studio, seleccionamos la opción "New Connection" Aparecera una ventana emergente donde ingresaremos los parámetros de la conexión:
-``Server=localhost / Authentication Type=Windows Authentication / Database=<default> / Server group =<default>``
-
-
-Una forma de chequear que el proceso haya sido correcto es revisando la pestaña Servers de Azure, donde debiera aparecer nuestro ``localhost`` conectado y con las subcarpetas de trabajo.
-
-## Creando y apuntando una bbdd usando ``CREATE DATABASE``/`USE`
-
-Procederemos a crear nuestra primera bbdd. Para ello en SSMS podemos hacer el proceso manual:
-
-- Haga clic con el botón derecho en Bases de datos y luego seleccione Nueva base de datos.
-- En Nueva base de datos, ingrese un nombre de base de datos.
-- Para crear la base de datos aceptando todos los valores predeterminados, seleccione Aceptar; de lo contrario, continúe con los siguientes pasos opcionales.
-
-Sin embargo, el proceso anterior se puede hacer mediante un **script**, el cual implica abrir una ventana de *New Query* y comenzar a codear. Al abrir una nueva ventana de scripting (queries) usamos el comando:
-
-``CREATE DATABASE mi_base_de_datos``
-
-Y esto creará una nueva base. De igual manera utilizando el comando
-
-`USE mi_base_de_datos`
-
-Implica que todas las consultas y procesos que se escriban en la ventana de script se harán sobre la base de datos apuntada. 
-
-## Tablas
-
-Como objeto clave de una BBDD, Una tabla es un objeto que esta formado por columnas, las cuales están interrelacionadas a través de la información que contienen. En jerga de bases de datos a una columna se le conoce como *campo*, mientras que una fila se le conoce como *registro*.
-
-En una BBDD, las tablas tienen un nombre único. Una BBDD puede contener varias tablas, y las tablas estar relacionadas entre sí por campos que comparten, llaves (un tipo de campo que revisaremos más adelante) y relaciones de cardinalidad entre sus registros (que también veremos más adelante). El conjunto de tablas y relaciones en una BBDD se conoce como el **Esquema de una BBDD** y se puede representar gráficamente en un diagrama que se conoce como **diagrama Entidad-Relación** 
+ Una BBDD puede contener varias tablas, y las tablas estar relacionadas entre sí por campos que comparten, llaves (un tipo de campo que revisaremos más adelante) y relaciones de cardinalidad entre sus registros (que también veremos más adelante). El conjunto de tablas y relaciones en una BBDD se conoce como el **Esquema de una BBDD** y se puede representar gráficamente en un diagrama que se conoce como **diagrama Entidad-Relación** 
 
 Ejemplo de diagrama ER: https://docs.staruml.io/working-with-additional-diagrams/entity-relationship-diagram
 
 ## Tipos de Datos
+
 Las bases de datos en las que se puede consultar con SQL se les conoce como bases de datos relacionales, mientras que los datos que se almacenan en ellas son datos estructurados; es decir, corresponden a un tipo bien específico de dato que caerá en las siguientes categorías:
 
 Tipos Numéricos
@@ -89,22 +42,113 @@ DROP TABLE mitabla
 ALTER TABLE cambia la estructura de una tabla. Por ejemplo, puede agregar o eliminar columnas, crear o borrar índices, cambiar el tipo de columnas existentes o cambiar el nombre de las columnas o de la tabla en sí.
 
 Ejemplo de agregar nueva columna:
-
+``
     ALTER TABLE mitabla
     ADD camponuevo tipo
-
+``
 También puede ir acompañado de borrar columnas:
 ``
 ALTER TABLE mitabla DROP COLUMN nombre_columna1, DROP COLUMN nombre_columna2...
 ``
 Para borrar una tabla, usar comando DROP TABLE. Para vaciar usar TRUNCATE TABLE:
-
+``
     DROP TABLE nombre-tabla 
     TRUNCATE TABLE nombre-tabla
-
+``
 Ojo: operaciones CREATE/ALTER/DROP requieren permisos de escritura
 
+## Inserción de registros y populating
+
+`INSERT` crea una fila con cada columna establecida en su valor predeterminado
+
+``INSERT INTO tbl_name ( campos...) VALUES( valores...);``
+    
+Es decir, se cargan una lista de campos determinados (que pueden ser todos) y sus valores respectivos. Un valor de un campo también se le conoce como _Instancia_.
+
+*   Las cadenas de texto siempre deben ir entre comillas.
+*   Por ejemplo las fechas en SQL son en formato yyyy-mm-dd. Deben ir entre comillas como cadenas de texto.
+*   Los números decimales separan el número con la parte decimal con un punto.
+    
+## Sintaxis básica de SQL
+SQL utiliza una sintaxis similar a otros lenguajes de programación, compuesta por palabras clave, operadores y expresiones. Las sentencias SQL suelen estar compuestas por cláusulas como SELECT, FROM, WHERE, ORDER BY y GROUP BY, y se terminan con un punto y coma (;).
+
+``
+    --Sintaxis consulta
+    SELECT campo1, campo2, ...
+    FROM tabla
+    WHERE condicion
+    ORDER BY campo1 ASC/DESC
+    --Seleccionar toda una tabla
+    SELECT * FROM tabla
+``  
+
+## Sentencia SELECT
+La sentencia SELECT se utiliza para recuperar datos de una o más tablas. Suele estar compuesta por la palabra clave SELECT, seguida de una lista de columnas a recuperar, y la cláusula FROM, que especifica la tabla o tablas de las que recuperar los datos.
+
+Ejemplo:
+
+``SELECT columna1, columna2, columna3 FROM tabla1;``
+
+Esta sentencia recupera los valores de columna1, columna2 y columna3 de tabla1.
+
+## Filtrado de datos con la cláusula WHERE
+
+La cláusula WHERE se utiliza para filtrar datos en función de ciertas condiciones. Suele utilizarse en conjunción con la sentencia SELECT y permite recuperar solo las filas que coinciden con una condición específica.
 
 
+``SELECT columna1, columna2 FROM tabla1 WHERE columna3 = 'valor'``
+
+Esta sentencia recupera los valores de columna1 y columna2 de tabla1 donde columna3 es igual a 'valor'.
 
 
+La cláusula `WHERE` involucra condiciones. En general una condicion es una proposición lógica, es decir un enunciado cuyo valor es verdadero o falso. Siendo `WHERE` una instrucción en bloque (como `SELECT` también), evaluará qué registros de un campo cumplen con la condición, y los filtrará del bloque final.
+``
+    --CONDICIONALES
+    --operadores
+    WHERE campo > valor -- mayor que
+    WHERE campo < valor --menor que
+    WHERE campo >= valor --mayor o igual
+    WHERE campo <= valor --menor o igual
+    WHERE campo <> valor -- distinto
+    WHERE campo = valor --igual
+    WHERE campo LIKE patron (veremos en Seccion 2)
+    WHERE campo IN (valor1, valor2...)--si el campo esta en un conjunto de valores
+    WHERE campo BETWEEN rangomin AND rangomax --si el campo esta entre rangomin y rango max
+    WHERE campo IS NULL -- filas en donde el campo seleccionado es null
+    WHERE campo IS NOT NULL --filas donde el campo no es null (vacio)
+``  
+
+Respecto a lo anterior, entenderemos los valores `NULL`, como un dato vacío que posee algún campo para un registro específico en un tabla. Es decir, una celda donde no hay nada (ni siquiera espacios en blanco, por lo que una celda en blanco podría no ser `NULL`; en general las celdas vacías mostrarán un `NULL` para evitar confusiones).
+
+Como `WHERE` evalúa proposiciones lógicas, sus valores de verdad pueden ser sujeto a los operadores tradicionales lógicos (de conjunción, disyunción, negación).
+``
+    -Operadores Logicos
+    --operador AND
+    SELECT campo1, campo2, ...
+    FROM tabla
+    WHERE condicion1 AND condicion2 AND condicion3...
+    --operador OR
+    SELECT campo1, campo2, ...
+    FROM tabla
+    WHERE condicion1 OR condicion2 OR condicion3...
+    --operador NOT
+    SELECT campo1, campo2, ...
+    FROM tabla
+    WHERE NOT condicion;
+``  
+
+## Ordenación de datos con la cláusula ORDER BY
+
+La cláusula ORDER BY se utiliza para ordenar los resultados de una consulta en orden ascendente o descendente. Suele utilizarse en conjunción con la sentencia SELECT y permite especificar la columna o columnas por las que ordenar.
+
+``SELECT columna1, columna2 FROM tabla1 ORDER BY columna1 ASC;``
+
+Esta sentencia recupera los valores de columna1 y columna2 de tabla1 ordenados por columna1 en orden ascendente.
+
+## Limitación de resultados con la cláusula LIMIT
+La cláusula LIMIT se utiliza para limitar el número de filas devueltas por una consulta. Suele utilizarse en conjunción con la sentencia SELECT y permite especificar el número máximo de filas a devolver.
+
+Ejemplo:
+``SELECT columna1, columna2 FROM tabla1 LIMIT 10;``
+
+Esta sentencia recupera las primeras 10 filas de columna1
