@@ -102,7 +102,7 @@ Esta sentencia recupera los valores de columna1 y columna2 de tabla1 donde colum
 
 
 La cláusula `WHERE` involucra condiciones. En general una condicion es una proposición lógica, es decir un enunciado cuyo valor es verdadero o falso. Siendo `WHERE` una instrucción en bloque (como `SELECT` también), evaluará qué registros de un campo cumplen con la condición, y los filtrará del bloque final.
-``
+```
     --CONDICIONALES
     --operadores
     WHERE campo > valor -- mayor que
@@ -116,12 +116,12 @@ La cláusula `WHERE` involucra condiciones. En general una condicion es una prop
     WHERE campo BETWEEN rangomin AND rangomax --si el campo esta entre rangomin y rango max
     WHERE campo IS NULL -- filas en donde el campo seleccionado es null
     WHERE campo IS NOT NULL --filas donde el campo no es null (vacio)
-``  
+``` 
 
 Respecto a lo anterior, entenderemos los valores `NULL`, como un dato vacío que posee algún campo para un registro específico en un tabla. Es decir, una celda donde no hay nada (ni siquiera espacios en blanco, por lo que una celda en blanco podría no ser `NULL`; en general las celdas vacías mostrarán un `NULL` para evitar confusiones).
 
 Como `WHERE` evalúa proposiciones lógicas, sus valores de verdad pueden ser sujeto a los operadores tradicionales lógicos (de conjunción, disyunción, negación).
-``
+```
     -Operadores Logicos
     --operador AND
     SELECT campo1, campo2, ...
@@ -135,7 +135,7 @@ Como `WHERE` evalúa proposiciones lógicas, sus valores de verdad pueden ser su
     SELECT campo1, campo2, ...
     FROM tabla
     WHERE NOT condicion;
-``  
+``` 
 
 ## Ordenación de datos con la cláusula ORDER BY
 
