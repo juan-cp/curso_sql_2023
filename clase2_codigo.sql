@@ -133,4 +133,15 @@ end as tipo,
 case when nombre like 'l%' then 'SI' else 'NO' end as parte_L
  from salarios
 
--- mostrar nombre, apellido y nueva columna si es que nombre parte con 'L'
+
+--CTE: expresiones de tabla comunes
+with cte as (
+select salarios.* , 
+case
+when salario>500000 then 'A'
+when salario<=500000 then  'B'
+end as tipo,
+case when nombre like 'l%' then 'SI' else 'NO' end as parte_L
+ from salarios
+)
+SELECT tipo, avg(salario) from cte group by tipo 
