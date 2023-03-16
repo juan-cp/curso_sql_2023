@@ -1,3 +1,5 @@
+--CAMBIAR A SQL SERVER EN https://sqliteonline.com/
+
 CREATE TABLE my_table (
   id INT NOT NULL,
   name VARCHAR(50) NOT NULL,
