@@ -64,3 +64,6 @@ VALUES
    ;
 
 select * from my_table 
+
+-- RANDOM DATE
+SELECT DATEADD(DAY, ABS(CHECKSUM(NEWID())) % 3650, '2010-01-01') AS random_date;
