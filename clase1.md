@@ -70,6 +70,7 @@ Es decir, se cargan una lista de campos determinados (que pueden ser todos) y su
 *   Los números decimales separan el número con la parte decimal con un punto.
     
 ## Sintaxis básica de SQL
+
 SQL utiliza una sintaxis similar a otros lenguajes de programación, compuesta por palabras clave, operadores y expresiones. Las sentencias SQL suelen estar compuestas por cláusulas como SELECT, FROM, WHERE, ORDER BY y GROUP BY, y se terminan con un punto y coma (;).
 
 ```
@@ -83,6 +84,7 @@ SQL utiliza una sintaxis similar a otros lenguajes de programación, compuesta p
 ```  
 
 ## Sentencia SELECT
+
 La sentencia SELECT se utiliza para recuperar datos de una o más tablas. Suele estar compuesta por la palabra clave SELECT, seguida de una lista de columnas a recuperar, y la cláusula FROM, que especifica la tabla o tablas de las que recuperar los datos.
 
 Ejemplo:
@@ -145,10 +147,11 @@ La cláusula ORDER BY se utiliza para ordenar los resultados de una consulta en 
 
 Esta sentencia recupera los valores de columna1 y columna2 de tabla1 ordenados por columna1 en orden ascendente.
 
-## Limitación de resultados con la cláusula LIMIT
-La cláusula LIMIT se utiliza para limitar el número de filas devueltas por una consulta. Suele utilizarse en conjunción con la sentencia SELECT y permite especificar el número máximo de filas a devolver.
+## Comando DISTINCT
 
-Ejemplo:
-``SELECT columna1, columna2 FROM tabla1 LIMIT 10;``
+Dentro de una tabla, una columna a menudo contiene muchos valores duplicados; a veces solo desea enumerar los valores distintos. El comando DISTINCT elimina repeticiones de una tupla de datos en una fila.
 
-Esta sentencia recupera las primeras 10 filas de columna1
+```
+SELECT DISTINCT columna1, columna2, ...
+FROM tabla_nombre;
+```
