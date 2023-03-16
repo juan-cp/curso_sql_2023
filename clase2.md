@@ -1,6 +1,7 @@
 # Clase 2: SQL nivel medio
 
 ## Alias de columna y tabla
+
 Los alias de columna y tabla se utilizan para cambiar el nombre de las columnas o tablas en una consulta. Los alias se definen utilizando la palabra clave AS o simplemente un espacio en blanco.
 
 Ejemplo:
@@ -47,19 +48,6 @@ ON table1.column1 = table2.column1;
 
 Esta consulta combina los datos de table1 y table2 en una sola consulta utilizando un INNER JOIN basado en la columna column1.
 
-## Subconsultas y consultas anidadas
-
-Las subconsultas se utilizan para realizar consultas dentro de una consulta. Las subconsultas pueden ser utilizadas en cláusulas WHERE, SELECT, FROM y HAVING.
-
-Ejemplo:
-```
-SELECT column1, column2 
-FROM table1 
-WHERE column1 IN (SELECT column1 FROM table2 WHERE column2 = 'value');
-```
-
-Esta consulta devuelve los valores de column1 y column2 de table1 donde column1 está presente en la subconsulta, que selecciona los valores de column1 de table2 donde column2 es igual a 'value'.
-
 ## Operadores de conjuntos: UNION, INTERSECT, EXCEPT
 Los operadores de conjuntos se utilizan para combinar resultados de dos o más consultas en una sola consulta.
 
@@ -73,6 +61,19 @@ FROM table2;
 ```
 
 Esta consulta combina los valores de column1 de table1 y table2 en una sola columna utilizando el operador de conjunto UNION.
+
+## Subconsultas y consultas anidadas
+
+Las subconsultas se utilizan para realizar consultas dentro de una consulta. Las subconsultas pueden ser utilizadas en cláusulas WHERE, SELECT, FROM y HAVING.
+
+Ejemplo:
+```
+SELECT column1, column2 
+FROM table1 
+WHERE column1 IN (SELECT column1 FROM table2 WHERE column2 = 'value');
+```
+
+Esta consulta devuelve los valores de column1 y column2 de table1 donde column1 está presente en la subconsulta, que selecciona los valores de column1 de table2 donde column2 es igual a 'value'.
 
 ## Expresiones CASE
 Las expresiones CASE se utilizan para realizar evaluaciones condicionales en una consulta.
