@@ -1,5 +1,5 @@
 
---ejemplo: crear nuestra primera tabla t
+--ejemplo: crear nuestra primera tabla
 create table mitabla (nombre varchar(20), edad int, fecha_nacimiento date)
 --borrar tabla 
 drop table mitabla
