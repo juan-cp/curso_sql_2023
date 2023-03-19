@@ -145,3 +145,17 @@ case when nombre like 'l%' then 'SI' else 'NO' end as parte_L
  from salarios
 )
 SELECT tipo, avg(salario) from cte group by tipo 
+
+
+-- objeto Similar: vistas
+
+create view vista_salarios1 as
+select salarios.* , 
+case
+when salario>500000 then 'A'
+when salario<=500000 then  'B'
+end as tipo,
+case when nombre like 'l%' then 'SI' else 'NO' end as parte_L
+ from salarios
+
+select * from dbo.vista_salarios1
