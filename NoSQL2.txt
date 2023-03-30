@@ -1,0 +1,1672 @@
+Jordi Cahué Mestre
+
+Data Lakes
+Bases de datos SQL y NoSQL
+SESIÓN 2
+
+OBSbusiness.school
+
+Partner académico:
+
+Índice
+1.
+
+Bases de datos NoSQL ......................................................................................................3
+
+1.1
+
+Introducción..................................................................................................................3
+
+1.1.1
+
+Breve historia de las bases de datos NoSQL ...............................................................4
+
+1.2
+
+Definición de bases de datos NoSQL ..............................................................................4
+
+1.2.1
+
+Modelo BASE .............................................................................................................5
+
+1.2.2
+
+La importancia del modelo BASE vs ACID ...................................................................6
+
+1.3
+
+El Teorema de CAP ........................................................................................................7
+
+1.4
+
+Ventajas de las bases de datos NoSQL...........................................................................9
+
+1.5
+
+Cinco tipos de bases de datos NoSQL.............................................................................9
+
+1.5.1
+
+La ventaja de “no tener” esquema ........................................................................... 11
+
+1.5.2
+
+Comparativa modelos relacionales frente a modelos agregados ............................. 13
+
+1.6
+
+Bases de datos Key-Value ........................................................................................... 15
+
+1.6.1
+
+Ejemplo de uso de una base de datos Key-Value ...................................................... 16
+
+1.6.2
+
+Casos de uso de bases de datos Key-Value ............................................................... 17
+
+1.7
+
+Bases de datos NoSQL tipo column-family ................................................................... 18
+
+1.7.1
+
+Ejemplo con base de datos Cassandra...................................................................... 19
+
+1.8
+
+Bases de datos NoSQL tipo Document ......................................................................... 21
+
+1.8.1
+
+Casos de uso de bases de datos NoSQL documentales.............................................. 22
+
+1.9
+
+Bases de datos NoSQL de tipo Grafo ........................................................................... 23
+
+1.9.1
+
+Ejemplos de casos de uso de bases de datos de grafos ............................................. 25
+
+1.10
+
+Bases de datos NoSQL orientadas a búsquedas ....................................................... 27
+
+1.11
+
+Criterios de decisión SQL y NoSQL ............................................................................ 28
+
+1.12
+
+¿Cómo evaluar la mejor base de datos NoSQL? ....................................................... 29
+
+1.12.1
+
+Evaluación técnica ................................................................................................... 29
+
+1.12.2
+
+Evaluación de Negocio............................................................................................. 33
+
+OBSbusiness.school
+
+2
+
+Partner académico:
+
+Las bases de datos NoSQL surgen de la necesidad de contemplar casos de usos masivo de
+información de forma distribuida. Hemos visto en el punto anterior los retos a os que se
+enfrentan las bases de datos relacionales o tabulares.
+También debemos considerar la escalabilidad de la base de datos cuando se deben tratar
+grandes volúmenes de información, y garantizar un tiempo de acceso bajo y eficiente a
+las aplicaciones. Por lo general, las bases de datos relacionales escalan de forma vertical,
+esto es: añadiendo más recursos de computación y memoria en la misma máquina donde
+se ejecuta el RDBMS. Este tipo de escalabilidad es cara ya que normalmente se debe
+emplear hardware de tipo high-end.
+Existe otro tipo de escalabilidad, la denominada horizontal, consistente en distribuir la
+carga entre varias máquinas. El crecimiento se puede realizar en máquinas más
+económicas y en gran número de ellas. Se construyen clústers de computación. Este
+modelo de escalabilidad se adapta muy bien a las bases de datos NoSQL.
+
+Cambios
+dinámicos de
+las relaciones
+
+Explosión de
+contenido no
+estructurado
+
+Rigidez del
+esquema de la
+base de datos
+Datos sparse
+
+Distribución y
+acceso global
+
+Bases de datos
+NoSQL
+“Not only SQL”
+
+RDBMS
+
+OBSbusiness.school
+
+RDBMS
+
+3
+
+Partner académico:
+
+A continuación se enumeran una serie de hechos relevantes en la historia de las bases de
+datos NoSQL:
+1998: La primera aparición del término NoSQL - Carlo Strozzi RDMS lightweight, accedido
+por scripts, no usaba SQL.
+2006: Google libera un paper que describe su base de datos Bigtable: una base de datos
+distribuida que escala a petabytes de datos en miles de servidores low cost.
+2007: Amazon libera un paper describiendo su base de datos Dynamo, la primera base de
+datos de tipo clave-valor distribuida globalmente
+Hoy, el movimiento NoSQL incluye cientos de productos de bases de datos NoSQL, lo que
+ha dado lugar a una variedad de definiciones para el término NoSQL.
+Si nos fijamos en Google Trends, el término NoSQL empieza a aparecer en las búsquedas
+en 2008 y desde entonces mantiene un interés alto :
+
+Las bases de datos NoSQL proporcionan un mecanismo para el almacenamiento y la
+recuperación de datos que emplean modelos de consistencia menos restrictivos que las
+tradicionales base de datos relacionales o tabulares.
+Los sistemas NoSQL también se conocen como "Not only SQL" para enfatizar que de
+hecho permiten que se usen lenguajes de consulta similares a SQL.
+
+1
+
+https://en.wikipedia.org/wiki/NoSQL
+
+OBSbusiness.school
+
+4
+
+Partner académico:
+
+Las bases de datos NoSQL emplean modelos de consistencia menos restrictivos, se conoce
+como modelos BASE, en contraposición al modelo ACID.
+
+La siglas BASE son: Basically Available, Soft State, Eventually Consistent
+BASE es una filosofía de diseño de base de datos que valora:
+1. La Disponibilidad sobre la Consistencia de las operaciones. “El sistema de base de
+datos siempre parece funcionar”
+2. Soft State. El estado de la base de datos no tiene que ser consistente todo el
+tiempo
+3. Consistencia eventual: Se garantiza que al grabar datos en la base de datos, estos
+estarán disponibles eventualmente para consultar, pero no de forma inmediata. La
+consistencia se consigue más tarde.
+Es el fundamento las bases de datos NoSQL. Este modelo permite disponer de bases de
+datos distribuidas, en las que los datos se distribuyen en muchos sistemas de
+almacenamiento con un alto grado de replicación para obtener un alto grado de
+disponibilidad.
+Recordar que existen dos modelos para distribuir los datos: sharding y replication. Por
+sharding distribuimos (particionamos) los datos en nodos, no todos los nodos tienen los
+mismos datos, solo su parte. Este esquema lo sigue base de datos como Cassandra. En el
+caso de replication, todos los datos se copian en diferentes nodos, ofreciendo máxima
+disponibilidad de todos los datos en caso de caída de algunos nodos. Este esquema puede
+ser configurado en bases de datos como MongoDB.
+
+OBSbusiness.school
+
+5
+
+Partner académico:
+
+75GB
+
+Sharding
+
+25GB
+
+25GB
+
+25GB
+
+75GB
+
+Replication
+75GB
+
+75GB
+
+75GB
+
+Las bases de datos relacionales o tabulares son ACID, y se usan en entornos denominados
+Mission Critical, como por ejemplo el transaccional de un Banco, o en Mercados de
+Valores.
+Pero el modelo BASE es usado en aquellos casos de uso en los que no se requiere que una
+escritura a la base de datos esté disponible de forma inmediata para las aplicaciones que
+leen de la base de datos. Por ejemplo, un usuario que realiza un post en Facebook o en
+Twitter o el Linkedin, no es necesario que esta información aparezca inmediatamente a
+los usuarios, se puede demorar unos segundos, incluso minutos.
+
+María
+Juan
+
+Ana
+
+OBSbusiness.school
+
+6
+
+Partner académico:
+
+cada segundo, en promedio, alrededor de 6,000 tweets.
+o 350,000 tweets enviados por minuto
+o, 500 millones de tweets enviados cada día
+o 200 billion de tweets por año 2
+Muchas empresas usan productos de consistencia BASE cuando prueban ideas porque son
+gratuitas, pero luego migran a una base de datos de pago que cumple con ACID cuando
+quieren comenzar a funcionar en un sistema de misión crítica.
+La forma más fácil de decidir si se requiere ACID es considerar las interacciones que las
+personas y otros sistemas tienen con los datos. Por ejemplo, si se insertan o actualizan
+datos, ¿es importante que la próxima consulta se puedan ver los cambios? En otras
+palabras, ¿las decisiones importantes dependen del estado actual de la base de datos?
+¿Ver datos ligeramente desactualizados significaría que esas decisiones podrían ser
+fatalmente defectuosas?
+En los servicios financieros, la necesidad de coherencia es obvia. Pensar en los traders
+que compran acciones. Necesitan verificar el saldo de efectivo antes de operar para
+asegurarse de que tienen el dinero para cubrir la compra. Si la base de datos que están
+consultando es eventualmente consistente, es posible que no vean una falta de fondos
+suficientes, exponiendo así a su organización al riesgo financiero. Se pueden construir
+casos similares para ACID sobre BASE en atención médica, defensa, inteligencia y otros
+sectores. Sin embargo, todo se reduce a los datos y la importancia de tenerlos
+actualizados.
+
+En el pasado, cuando queríamos almacenar más datos o aumentar nuestra potencia de
+procesamiento, la opción común era escalar verticalmente (obtener máquinas más
+potentes) u optimizar aún más la base de código existente. Sin embargo, con los avances
+en el procesamiento paralelo y los sistemas distribuidos, es más común expandirse
+horizontalmente o tener más máquinas para hacer la misma tarea en paralelo. Es aquí
+donde con el auge de las bases de datos distribuidas aparece el Teorema de CAP:
+
+2
+
+https://www.dsayce.com/social-media/tweets-day/
+
+OBSbusiness.school
+
+7
+
+Partner académico:
+
+Teorema de CAP 3: Consistency – Availability – Partitioning. Eric Brewer formuló esta
+conjetura en el año 2000, y posteriormente fue probada en el 2002, convirtiéndose en un
+teorema. El teorema de CAP postula que una base de datos distribuida solo puede
+cumplir 2 de las tres características
+•
+
+Consistency: La base de datos es completamente consistente, es decir toda
+lectura obtiene siempre los datos más recientes o un error, nunca obtiene datos
+desactualizados.
+
+•
+
+Availabiity: Si la base de datos se ejecuta en un cluster de nodos, si algunos de los
+no están disponibles, el resto de nodos es capaz de seguir procesado lecturas y
+escrituras a la base de datos de forma correcta y, además, cuando estos nodos no
+disponibles se recuperan, la base de datos sigue funcionando correctamente desde
+todos los nodos.
+
+•
+
+Partition Tolerance: La base de datos distribuida continúa dando servicio de
+lecturas y escrituras, incluso cuando hay errores de comunicación entre nodos (se
+produce retrasos o pérdidas de mensajes entre nodos). Es decir, hay suficientes
+nodos y réplicas de información para continuar dando servicio.
+
+Las bases de datos relacionales proporcionan una consistencia muy fuerte y una muy
+buena disponibilidad, pero no son tolerantes la particionado.
+Las bases de datos NoSQL varian entre Consistencia y Particionado o Disponibilidad y
+Particionado
+
+Consistency
+
+RDBMS:
+Oracle,
+MySQL
+IBM Db2
+
+CA
+
+Availability
+
+NoSQL:
+MongoDB
+HBase
+Redis
+
+CP
+
+AP
+
+Partition
+tolerance
+
+NoSQL:
+CouchDB, Cassandra,DynamoDB
+
+3
+
+https://en.wikipedia.org/wiki/CAP_theorem
+
+OBSbusiness.school
+
+8
+
+Partner académico:
+
+Las Bases de Datos NoSQL tienen un serie de ventajas importantes, que responden a las
+limitaciones o restricciones de las Bases de Datos relacionales:
+Las BD NoSQL evitan:
+•
+
+El overhead de las transacciones ACID
+
+•
+
+La complejidad de las queries SQL
+
+•
+
+La rigidez del esquema de la base de datos
+
+•
+
+Las transacciones (se gestionan en la aplicación)
+
+Las BD NoSQL proporcionan:
+•
+
+Facilidad y frecuencia en los cambios a la Base de Datos
+
+•
+
+Desarrollo rápido
+
+•
+
+Grandes volúmenes de datos (ejemplo: Google)
+
+•
+
+No tenemos esquema (Schema less)
+
+•
+
+Persistencia políglota: seleccionamos la mejor tecnología que se adapte a nuestro
+datos: un grafo, un documento, etc
+
+Las Bases de Datos NoSQL se dividen en 5 categorías, dependiendo de como estructuran
+la información:
+•
+
+Key-value : Almacenan conjuntos de claves y sus valores. Los valores pueden ser
+simples o compuestos (documentos XML o JSON). Las más usuales son:
+
+•
+
+Document: almacenan información en documentos XML, JSON. La información en
+el documento tiene estructur de árbol. Las más extendidas son:
+
+OBSbusiness.school
+
+9
+
+Partner académico:
+
+•
+
+Column family: es una extensión de las estructuras de tablas tradicionales,
+permitiendo agrupar columnas en conjuntos y operar directamente sobre ellos.
+Las que consideramos con capacidad enterprise son:
+
+•
+
+Graph: almacenan información cuya estructura es un grafo: nodos relacionados
+con nodos (ejemplo: una red social como linkedin). La que se ha impuesto en el
+mercado como estándar de-facto es:
+
+•
+
+Search engines: Orientados a búsquedas en datos semiestructurados, la
+información está estructurada en JSON y disponen de lenguajes de búsqueda y
+filtrad. La más usada es:
+
+Si consideramos la complejidad de estructuras de información que podemos almacenar
+en las bases de datos frente al volumen de información que podemos gestionar, podemos
+situar cada tecnología en ambos ejes:
+
+OBSbusiness.school
+
+10
+
+Partner académico:
+
+Volumen de datos
+
+Key-value
+Column family
+Document
+Graph
+RDBMS
+
+Complejidad de datos
+
+Observar que las bases de datos relacionales cubren un amplio abanico de casos de uso
+en cuanto a estructuras de información, no cubriendo bien las estructuras de grafos. Lo
+que sí es un hecho es que con grandes volúmenes de información, las bases de datos
+NoSQL, dada su naturaleza distribuida y escalabilidad horizontal son más idóneas. Las
+bases de datos Key-value son las más sencillas, permite guardar información simple pero
+con unos volúmenes muy grandes. Las estructuras de datos más complejas son aquellas
+que relacionan los datos en forma de grafo (lo que conocemos como linked data). En este
+campo, las bases de datos orientadas a grafos son las más adecuadas.
+Uno de los tipos de bases de datos NoSQL mas usadas son las de tipo Documento, como
+MongoDB, ya que permites modelizar datos de una forma muy parecida a las bases de
+datos relacionales, pero con la ventaja de no estar sujetos a un esquema fijo de datos.
+
+Una de las ventajas más importantes de la base de datos NoSQL es que tienen un
+esquema muy flexible, tanto que muchas veces se conocen como schema-less databases,
+a diferencia de las bases de datos relacionales o tabulares, donde tenemos un esquema
+fjo Uno de los tipos de bases de datos NoSQL mas usadas son las de tipo Documento,
+como MongoDB, ya que permites modelizar datos de una forma muy parecida a las bases
+de datos relacionales, pero con la ventaja de no estar sujetos a un esquema fijo de datos.
+La rigidez que impone un esquema de bases de datos relaciona la hemos repasado en un
+
+OBSbusiness.school
+
+11
+
+Partner académico:
+
+punto anterior. Ahora, si nos fijamos en las propiedades de las bases de datos NoSQL
+vemos que:
+•
+
+No hay necesidad de tener campos a null cuando estos no están informados.
+Simplemente no los añadimos en los registros (documentos, si se trata de
+MongoDB). Con esto eliminamos el problema de los datos sparse.
+
+•
+
+No hay tipos de datos, están implícitos con el valor de los datos. Por ejemplo, si el
+campo tiene un valor string, el tipo será String: no hace falta declarar el campo
+como String. Con esta propiedad, no hace falta ningún cambio de tipos, si es
+necesario por cambios de requerimientos (el equivalente a un ALTER TABLE en
+bases de datos relacionales)
+
+•
+
+Los datos se obtienen en agregados (documentos). Veremos más adelante como
+modelar relaciones one-to-one, one-to.many y many-to-many con documentos. La
+idea fundamental es que los documentos llevan embebidos otros subdocumentos,
+agregando toda la información que requiera la aplicación:
+
+OBSbusiness.school
+
+12
+
+Partner académico:
+
+Como ya hemos visto, nn el modelo relacional la información se estructura en tablas
+En las tablas tenemos registros con unos campos pre-definidos, la estructura es limitada:
+•
+
+No podemos anidar información
+
+•
+
+No podemos poner listas de valores
+
+Si lo queremos hacer, tenemos que añadir más tablas y más relaciones:
+Cliente
+
+Orden
+
+nombre
+
+OrdenPago
+tarjeta
+id_tx
+
+Direccion
+calle
+ciudad
+provincia
+cod_postal
+
+OrdenItem
+precio
+
+Producto
+nombre
+
+DireccionFacturacion
+DireccionEnvio
+
+En cambio, en un modelo agregado entendemos como agregación una colección de
+información que se debería tratar como una unidad, es decir, toda aquella información
+que la podemos tratar en su conjunto por la aplicación. Una unidad o agregación forma
+un elemento de consistencia:
+
+Cliente
+
+Orden
+
+nombre
+
+OrdenPago
+tarjeta
+id_tx
+
+Direccion
+calle
+ciudad
+provincia
+cod_postal
+
+OBSbusiness.school
+
+DireccionFacturacion
+
+OrdenItem
+precio
+
+Producto
+nombre
+
+DireccionEnvio
+
+13
+
+Partner académico:
+
+Siguiendo con este ejemplo, en el modelo relacional, si vemos las tablas con algunos
+registros:
+
+Data Model Relacional
+Cliente
+
+Producto
+
+ID
+1
+
+ID
+1000
+1020
+
+NOMBRE
+Juan Pérez
+
+NOMBRE
+iPad
+MacBook Pro
+
+Direccion
+ID
+23
+37
+
+CALLE
+CIUDAD
+Avd. Diagonal Barcelona
+C. Aragon Barcelona
+
+PROVINCIA COD_POSTAL
+Barcelona
+8080
+Barcelona
+8083
+
+Orden
+ID
+47
+
+CLIENTE_ID DIRECCION_ENVIO
+1
+23
+
+OrdenItem
+ID
+1
+2
+
+ORDEN_ID PRODUCTO_ID
+47
+1000
+47
+1020
+
+PRECIO
+600
+1300
+
+ORDEN_ID
+TARJETA
+47
+111222333444AB
+
+ID_TX
+2341
+
+OrdenPago
+ID
+1
+
+DIR_FACTURACION
+1
+
+DireccionFacturacion
+ID
+1
+
+CLIENTE_ID DIRECCION_ID
+1
+37
+
+Este modelo como agregado lo tendríamos en dos documentos, uno para el cliente y otra
+para la orden:
+
+OBSbusiness.school
+
+14
+
+Partner académico:
+
+Es la base de datos NoSQL más simple. Las implementaciones más habituales son Redis 4 y
+Amazon DynamoDB 5
+La idea principal es usar una hash table- Los datos (Values) se acceden mediante llaves
+(Keys). Como símil podemos escoger las cajas fuertes: si tienes la llave puedes acceder al
+contenido de la caja:
+
+Los datos no requieren tener un formato determinado, puede ser binario, o un
+documento JSON, o lo que se necesite guardar.
+El modelo de datos consiste en parejas (clave, valor).
+Las operaciones que soporta una base de datos de este tipo son:
+
+4
+5
+
+https://redis.io/
+https://aws.amazon.com/dynamodb/
+
+OBSbusiness.school
+
+15
+
+Partner académico:
+
+Insert(key, value)
+
+Inserta el valor según la
+clave
+
+Abres la caja con la llave e
+insertas el valor
+
+Fetch(key)
+
+Obtiene el valor
+
+Abres la caja y ves el valor
+
+Update(key, value)
+
+Actualiza el valor
+
+Abres la caja y actualizas el
+valor que contiene
+
+Delete(key)
+
+Borra el valor
+
+Abres la caja y la vacías
+
+Tenemos una base de datos Key-Value donde almacenamos información de vehículos.
+Para cada clave tenemos una ficha de vehículo, y tenemos las siguientes operaciones de
+insert y update:
+
+1
+
+Insert(“123_qxz”, “{“Fabricante”:”Nissan”, “Modelo”:”Qashqai”, “Color”:”Blanco”, “Year”:2013}”)
+
+2
+
+Insert(“764_sdf”, “{“Fabricante”:”Volkswagen”, “Modelo”:”Golf”, “Color”:”Rojo”, “Year”:2015,
+“Transmision”:Auto}”)
+
+3
+
+Update(“123_qxz”, “{“Fabricante”:”Nissan”, “Modelo”:”Qashqai”, “Color”:”Blanco”, “Year”:2013,
+“Transmision”:”Manual}”)
+
+Después de las dos primeras operaciones de insert, la base de datos la tenemos en el
+siguiente estado:
+
+KEY
+
+Value
+
+“123_qxz”
+
+Fabricante: Nissan
+Modelo: Qashqai
+Color: Blanco
+Year: 2013
+
+“764_sdf”
+
+Fabricante: Volkswagen
+Volkswagen: Golf
+Color: Rojo
+Year: 2015
+Transmision: Auto
+
+1
+
+2
+
+Y después de aplicar la tercera operación de update:
+
+OBSbusiness.school
+
+16
+
+Partner académico:
+
+KEY
+
+Value
+
+“123_qxz”
+
+Fabricante: Nissan
+Modelo: Qashqai
+Color: Blanco
+Year: 2013
+Transmision: Manual
+
+“764_sdf”
+
+Fabricante: Volkswagen
+Volkswagen: Golf
+Color: Rojo
+Year: 2015
+Transmision: Auto
+
+3
+
+Básicamente los casos de uso de bases de datos Key-Value siguen un mismo patrón, la
+necesidad de acceder de forma muy rápida a la información.
+Ejemplos:
+•
+
+Entregar cientos de miles de anuncios web específicos cada segundo, a usuarios
+de diferentes países, en diferentes idiomas y a diferentes categorías de sitios web.
+La velocidad es crítica. Los anuncios deben aparecer en la página web sin
+ralentizar la experiencia del usuario.
+
+•
+
+Una aplicación web distribuida globalmente que necesita almacenar información
+de sesión o preferencias de usuario, pero no se desea colapsar los sistemas de
+bases de datos transaccionales con estos datos.
+
+•
+
+Como cache de datos. Si se requiere agilizar el acceso a los datos de una base de
+datos se interpone una cache para acceder a los datos por clave a muy alta
+velocidad. Por ejemplo, si tenemos un MongoDB que almacena una base de datos
+de libros, la aplicación consulta un libro por la clave del libro. La primera vez que
+se lee el libro se irá a buscarlo a la base de datos, pero las siguientes veces es más
+rápido acceder a la cache Redis en memoria:
+
+OBSbusiness.school
+
+17
+
+Partner académico:
+
+Las implementación más habituales de este tipo de base de datos son Cassandra 6 y
+Apache HBASE 7.
+En este tipo de bases de datos se almacenan datos agrupados en column families. una
+column family tiene varias filas, cada una es una columna (clave, valor).
+Las column families están asociadas a una clave de fila, que sirve para acceder a todas las
+column families de golpe.
+Las column families se diseñan para contener los datos que se necesitar acceder de forma
+conjunta. En este sentido, este tipo de base de datos cumple con el paradigma de
+modelos agregados que hemos visto con anterioridad.
+
+Normalmente las aplicaciones que usan este tipo de bases de datos cumplen unos
+patrones muy definidos:
+•
+
+Normalmente requieren muchas más escrituras que lecturas. La operación de
+escritura en este tipo de bases de datos es muy rápida.
+
+6
+7
+
+http://cassandra.apache.org/
+https://hbase.apache.org/
+
+OBSbusiness.school
+
+18
+
+Partner académico:
+
+•
+
+La aplicación siempre hace la lectura por la clave primaria
+
+•
+
+Los datos pueden ser particionados por la clave y ser distribuidos por múltiples
+nodos. Es mejor duplicar la información para favorecer las lecturas. Para que el
+particionado funcione bien es necesario diseñar bien la clave (ver ejemplo).
+
+Con estos patrones, los casos de uso más habituales son:
+•
+
+Transaction logging: Compras, Games (test scores en Playstation), películas vistas,
+o secuencia de la película (Netflix).
+
+•
+
+Almacén de series temporales de datos,
+
+•
+
+Datos históricos del tiempo.
+
+•
+
+Internet of Things en general.
+
+•
+
+Telemetría: IoT en coches.
+
+A continuación se presenta un ejemplo de diseño de una tabla con Cassandra, y veremos
+como el diseño de la clave es importante para tener un buen rendimiento:
+
+Create table MusicPlaylist (
+SongId int,
+SongName text,
+Year int,
+Singer text,
+Primary key(SongId, SongName)
+);
+Mediante esta sentencia creamos una tabla para almacenar grandes éxitos de canciones.
+•
+
+SongId es la clave de partición
+
+•
+
+SongName es la columna de clustering (column family), y agrupará SongName,
+Year y Singer.
+
+•
+
+Solo se crea una partición, por SongId. No hay más criterios para particionar,
+por lo que no se pueden distribuir las canciones.
+
+OBSbusiness.school
+
+19
+
+Partner académico:
+
+1 partición
+Penny Lane
+18
+
+1967
+Beatles
+All my loving
+23
+
+1963
+Beatles
+
+SongId
+
+Carry-Anne
+
+23
+
+64
+
+1967
+Evolution
+
+Help!
+42
+
+1965
+Beatles
+In dreams
+11
+
+1963
+Roy Orbison
+
+Con esta mala decisión de diseño el acceso será muy lento.
+Sin embargo, podemos escoger otro criterio para la clave:
+
+Create table MusicPlaylist (
+SongId int,
+SongName text,
+Year int,
+Singer text,
+Primary key((SongId, Year), SongName)
+);
+Ahora la clave de partición es (SongId, Year). Esta clave permite distribuir las canciones
+por año, cada año en una partición. Desde el punto de vista físico, las particiones se
+distribuyen en nodos del clúster. Fijaros en la diferencia, antes teníamos toda la base de
+datos en un solo nodo (por tener una única partición), ahora la tenemos en N nodos, con
+las particiones repartidas entre ellos.
+El acceso será muy rápido, ya que solo se accede a la partición-nodo que contiene los
+datos.
+Gráficamente:
+
+OBSbusiness.school
+
+20
+
+Partner académico:
+
+3 particiones
+11
+19
+63
+23
+19
+63
+
+In dreams
+1963
+Roy Orbison
+All my loving
+1963
+Beatles
+
+SongId, Year
+
+23,1963
+
+42
+19
+65
+
+18
+19
+67
+
+64
+19
+67
+
+Help!
+1965
+Beatles
+
+Penny Lane
+1967
+Beatles
+Carry-Anne
+1967
+Evolution
+
+Las implementaciones más habituales de este tipo de bases de datos son MongoDB 8 y
+CouchDB 9. En este tipo de bases de datos:
+•
+
+El documento es la unidad fundamental de almacenamiento
+
+•
+
+Los documentos pueden ser XML, JSON, BSON y otros formatos
+
+•
+
+Los documento son auto-contenidos, auto-descriptivos y siguen una estructura de
+árbol.
+
+•
+
+Los campos del documento pueden contener valores simples, valores compuestos,
+así como listas de valores
+
+•
+
+Los documentos almacenados no tienen porque tener la misma estructura,
+tendrán más o menos campos.
+
+•
+
+Cumple con el paradigma de modelos agregados
+
+Ejemplos de documentos en formatos JSON:
+
+8
+9
+
+https://www.mongodb.com/
+https://couchdb.apache.org/
+
+OBSbusiness.school
+
+21
+
+Partner académico:
+
+Un documento de cliente “Juan Pérez”
+
+Documento orden de compra 47:
+
+Los documentos son una forma de representación de la información a la que estamos
+muy habituados. Los documentos están a nuestro alrededor. Desde pedidos de compras,
+libros, descripciones de productos, fichas de pacientes, documentos de inspecciones, etc.
+Existe un mundo de infinitas casos de uso donde intervienen documentos. Para nombrar
+algunos:
+•
+
+Publicación de contenidos. Muchos contenidos se pueden estructurar como
+documentos: artículos, reviews,….
+
+•
+
+Control del ciclo de vida de los contenidos. No solo el contenido se puede
+estructura como documento, también toda la información asociada a si ciclo de
+vida: fecha de publicación, fecha de retirada del contenido, …
+
+OBSbusiness.school
+
+22
+
+Partner académico:
+
+•
+
+Distribución de contenidos a canales de ventas. Stores que publican sus ofertas en
+diferentes canales, por ejemplo en Amazon, estructuran las ofertas en
+documentos.
+
+•
+
+Catálogos de productos. Los catálogos de productos y servicios que se ofrecen en
+una web se pueden estructurar en documentos. Cada documento puede tener la
+descripción del producto, el precio, la garantía, el soporte post venta, …..
+
+•
+
+Sistemas de registro de la información de cliente. Los sistemas KYC (Know Your
+Customer) almacenan la información en gestores documentales, cada documento
+de cliente a su vez está formado por sub-documentos que describen diferentes
+aspectos de un cliente.
+
+•
+
+Los datos que se recopilan de la experiencia de uso de una aplicación por parte de
+un cliente se pueden agregar en documentos, que permiten hacer Customer
+Analytics.
+
+•
+
+Documentos que ya se estructuran en una serie de propiedades y cláusulas, por
+ejemplo las pólizas de seguros, o los contratos.
+
+•
+
+Los registros médicos de un paciente, o por ejemplo, las pruebas analíticas, como
+podemos ver en el siguiente ejemplo:
+
+Las bases de datos NoSQL de tipo grafo permiten modelar y registrar información que
+está relacionada entre sí. Este tipo de bases de datos está ganando mucho interés, ya que
+proporciona herramientas de modelado de datos muy potentes que se ajustan mejor a
+cómo funcionan los datos en el mundo real.
+
+OBSbusiness.school
+
+23
+
+Partner académico:
+
+La implementación más habitual de este tipo de bases de datos es Neo4j 10. También hay
+otras implementaciones, como JanusGraph 11.
+Ofrecen un gran nivel de flexibilidad para representar los datos, al tiempo que
+aprovechan al máximo las interacciones complejas entre ellos, para resolver casos de uso
+como la detección de patrones: por ejemplo, fraude.
+Sus características principales son:
+•
+
+Permiten modelar y almacenar entidades y relaciones entre entidades
+
+•
+
+Las entidades se llaman nodos y tienen propiedades
+
+•
+
+Las relaciones también se conocen como aristas y unen nodos entre sí
+
+•
+
+Las relaciones también tienen propiedades
+
+•
+
+Una consulta sobre le grafo también se conoce como recorrer el grafo
+
+•
+
+Las bases de datos de grafos tienen muy optimizados los recorridos por las
+aristas (relaciones), para proporcionar unas consultas muy rápidas.
+
+Como visualizamos un grafo:
+
+Si consideramos un ejemplo un poco más complejo:
+
+10
+11
+
+https://neo4j.com/
+https://janusgraph.org/
+
+OBSbusiness.school
+
+24
+
+Partner académico:
+
+Los grafos nos permiten modelar la realidad, ya que se adaptan muy bien al lenguaje que
+usamos para describirlo. Si analizamos el lenguaje usamos una estructura de tipo Sujeto –
+Verbo – Objeto, que en terminología de linked-data es Subject – predicate – Object. Esta
+estructura nos permite crear un grafo. Por ejemplo:
+•
+
+Juan(Sujeto) conoce a (Predicado) María (Objeto)
+
+•
+
+María (Sujeto) sigue a (Predicado) Pedro (Objeto)
+
+•
+
+Pedro (Sujeto) sigue a (Predicado) Juan (Objeto)
+
+•
+
+Pedro (Sujeto) trabaja en (Predicado) IBM (Objeto)
+
+•
+
+IBM (Sujeto) tiene oficinas en (Predicado) New York (Objeto)
+
+•
+
+En IBM (Sujeto) trabajan (Predicado) 300.000 Empleados (Objeto)
+
+Esta secuencia nos crea el siguiente grafo:
+
+María
+
+conoce a
+Juan
+
+sigue a
+
+sigue a
+Pedro
+trabaja en
+
+tiene oficinas en
+
+IBM
+
+trabajan
+300.000
+empleados
+
+New York
+
+El mundo real está híper-conectado, y las bases de datos de grafos tienen el objetivo de
+imitar esas relaciones a veces consistentes y a veces erráticas de una manera intuitiva.
+Las bases de datos de gráficos son extremadamente útiles para comprender grandes
+volúmenes de datos (Big Data) en escenarios como:
+•
+
+La optimización de rutas logísticas
+
+•
+
+Motores de sugerencias en retail
+
+•
+
+Detección de fraude
+
+OBSbusiness.school
+
+25
+
+Partner académico:
+
+•
+
+Monitorización de redes sociales.
+
+•
+
+Cyberseguridad – detección de patrones anómalos
+
+A continuación se muestran dos ejemplos de visualización de grafos con datos a gran
+escala:
+Redes sociales:
+
+Y un uso muy extendido, el análisis de ataques en cyber-seguridad, como este que
+corresponde a un Denial of Service (DoS):
+
+OBSbusiness.school
+
+26
+
+Partner académico:
+
+Este tipo de sistemas se han considerado bases de datos NoSQL. Sin embargo, su función
+está especializada en motores de indexación y búsqueda de documentos, normalmente
+en formato JSON, capaces de gestionar grandes volúmenes de información.
+La implementación más habitual es Elasticsearch 12.
+Disponen de un lenguaje para hacer consultas. En el caso de Elasticserach se denomina
+DSL: Domain Specific Language 13
+Normalmente se usan para habilitar un Enterprise Search de documentos y se combinan
+con otras bases de datos, por ejemplo, pueden indexar los documentos almacenados en
+un MongoDB.
+Un uso muy destacado de este tipo de bases de datos es la ingesta y procesado de logs de
+aplicaciones, sistemas, infraestructuras, …. Se trata de un gran volumen de información,
+que es clave para diagnosticar problemas de funcionamiento:
+
+12
+13
+
+https://www.elastic.co/enterprise-search
+https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html
+
+OBSbusiness.school
+
+27
+
+Partner académico:
+
+A continuación se muestra una tabla con una comparativa SQL vs NoSQL en una serie de
+dimensiones para ayudar a decidir que tipo de bases de datos se ajusta mejor al caso de
+uso:
+
+SQL
+
+NoSQL
+
+Los datos los tenemos en formato
+
+Datos estructurados y no
+
+tabla, y datos estructurados
+
+estructurados ( semi-estructurados)
+
+La estructura de los datos no cambia
+
+Facilidad para incorporar cambios de
+
+frecuentemente
+
+estructuras de datos y relaciones
+
+Necesitamos transaccionalidad ACID-
+
+Con consistencia BASE es suficiente
+
+Integridad de datos
+
+Queries analíticas complejas (joins).
+
+Search, queries simples, o queries
+
+Herramientas BI potentes
+
+especializadas por tipología de datos
+(Grafos)
+
+Sistemas mission-critical -
+
+Sistemas de Big Data
+
+operacionales
+
+OBSbusiness.school
+
+28
+
+Partner académico:
+
+Datos at rest - Batch
+
+Fast Data o real time
+
+Mayor Time-to-Market en el
+
+Menor Time-to-Market. Start small
+
+desarrollo de aplicaciones
+
+and grow.
+
+Como ya se ha visto en los apartados anteriores, hay una amplia oferta de de bases de
+datos NoSQL. Una tecnología puede ser muy sólida en la gestión de documentos,
+mientras que otra puede tener mucho performance en las consultas. Encontrar una única
+base de datos “one-size-fits-all“ puede que no sea posible, y por lo general se
+necesitarán varios productos.
+A continuación se describen una serie de criterios a evaluación que nos permitirán hacer
+una elección fundamentada:
+
+Evaluación Técnica
+Criterios de evaluación
+de Bases de datos
+NoSQL
+Evaluación de
+Negocio
+
+Para evaluar técnicamente qué base de datos NoSQL nos coviene más, tendremos en
+cuenta los siguientes criterios:
+
+OBSbusiness.school
+
+29
+
+Partner académico:
+
+Casos de Uso
+Query vs Search
+Escalado
+Evaluación Técnica
+Seguridad de datos
+Gestión de datos
+Extensiones
+Casos de Uso
+Como ya hemos visto en apartados anteriores, las bases de datos NoSQL son muy
+flexibles para guardar todo tipo de información y con cualquier formato. Sin embargo,
+según el caso de uso y tipo de información a guardar, serán más idónea unas tecnologías
+u otras:
+•
+
+Información estructurada en documentos (en estructura de árbol): bases de datos
+documentales, como MongoDB, CouchDB
+
+•
+
+Información noo estructurada (imágenes , voz): bases de datos Key-Value, como
+Redis.
+
+•
+
+Linked Data: bases de datos de grafos, como Neo4J o JanusGraph
+
+•
+
+Estructuras más complejas, y que tienen una información con estructura tabular:
+bases de datos de tipo column-family, como Cassandra
+
+OBSbusiness.school
+
+30
+
+Partner académico:
+
+Query vs Search
+Nos tenemos que plantear si en nuestro caso de uso necesitamos habilitar búsquedas por
+texto libre. Si es el caso, deberíamos optar por: Elasticsearch
+Si nuestra aplicación está orientada a queries más complejas, deberemos seleccionar un
+bases de datos NoSQL, teniendo en cuenta los casos de uso por estructura de datos
+anteriores.
+Es importante validar qué tipos de lenguajes de query están disponibles, y si permiten
+cubrir los requerimientos de la aplicación, evitando al mismo tiempo complejidad en las
+consultas. Por ejemplo, CQL 14 en Cassandra, es un lenguaje de query muy parecido al SQL
+de las bases de datos relacionales, pero limitado a Cassandra: la select es de un única
+tabla, no permitiendo múltiples tablas y joins.
+Escalado
+Es importante evaluar técnicamente las capacidades de crecimiento de estas bases de
+datos, en cuanto a volumen almacenado, así como del número de operaciones por
+segundo que procesan. De especial atención:
+•
+
+Evaluar capacidades de distribución de datos en múltiples servidores
+
+•
+
+Determinar throughput en lecturas / escrituras. Según el caso de uso se priorizan
+más las lecturas que las escrituras o al revés.
+
+•
+
+Evaluar la capacidad de storage usada vs la no usada y qué patrones de
+crecimiento ofrecen según tecnología NoSQL.
+
+•
+
+Evaluar si se ofrecen queries sub-second
+
+•
+
+Evaluar capacidades transaccionales. Algunas bases de datos NoSQL empiezan a
+odrecer modelos de consistencia ACID, además de la consistencia eventual tipo
+BASE.
+
+14
+
+http://cassandra.apache.org/doc/latest/cql/index.html
+
+OBSbusiness.school
+
+31
+
+Partner académico:
+
+Seguridad de datos
+Como parte de la evaluación técnica se deben contemplar los mecanismos que ofrecen las
+bases de datos NoSQL en materia de seguridad de datos:
+•
+
+Evaluar las capacidades de redundar/duplicar la información para resolver
+problemas de disponibilidad. Por ejemplo, técnicas se sharding en bases de datos
+MongoDB.
+
+•
+
+Evaluar las capacidades de recuperación de la base de datos, a partir del log de
+operaciones.
+
+•
+
+Capacidades de Audit. El log de operaciones nos debería permitir determinar qué
+usuario ha hecho una operación y en qué momento.
+
+•
+
+Herramientas para realizar backups y restores de la base de datos
+
+•
+
+Qué esquemas seguridad en el acceso a los datos están disponibles. Por ejemplo,
+si tenemos disponible un RBAC 15 (Role Based Access Control) disponible en el
+propio motor de la base de datos, o en su defecto, si es necesario construirlo de
+forma externa.
+
+Gestión de datos
+También es importante que capacidades de tratamiento de datos nos ofrecen las bases
+de datos NoSQL. Por ejemplo:
+•
+
+Evaluar las capacidades para extraer y enriquecer la información. Por ejemplo,
+entity extraction para textos.
+
+•
+
+Evaluar las capacidades de agregación de información (group by de SQL), por
+ejemplo sumarizaciones, medias, conteo, etc.
+
+15
+
+https://en.wikipedia.org/wiki/Role-based_access_control
+
+OBSbusiness.school
+
+32
+
+Partner académico:
+
+•
+
+Evaluar frameworks de desarrollo disponibles por tecnología NoSQL, y si existen
+conectores para los lenguajes de programación más habituales: Java, Python,
+JavaScript, .NET, Node.js
+
+Extensiones
+Evidentemente una base de datos NoSQL no está aislada, forma parte de una
+infraestructura donde deberemos integrar herramientas ETL y ELT, así como herramientas
+de BI, por ejemplo Tableau Databricks 16.
+Por tanto, deberemos evaluar la disponibilidad de conectores a todos estos tipos de
+herramientas.
+
+Para evaluar las bases de datos desde un punto de vista de negocio de deben tener en
+cuenta estos criterios:
+
+Evaluación de
+Negocio
+
+Disponibilidad de skills en la organización
+Generación rápida de valor à Time to Market
+Soporte disponible- Contratación de soporte
+Open source vs Software comercial
+Small Vendor vs Big Vendor y grado de adopción
+Posibilidades de expanxión a Cloud público
+
+16
+
+https://docs.databricks.com/integrations/bi/tableau.html
+
+OBSbusiness.school
+
+33
+
+Partner académico:
+
+Disponibilidad de skills en la organización
+Aunque los skills relacionados con las bases de datos NoSQL son parecidos a los
+requeridos para las bases de datos relacionales, existen diferencias importantes,
+motivadas por la naturaleza distribuida de las bd NoSQL, así como de las técnicas
+especiales de modelado de datos.
+Hay bases de datos NoSQL cuya curva de aprendizaje es suave, como MongoDB, mientras
+que otras es más difícil, por ejemplo, las de tipo grafo, Si en la organización se tienen
+skills de bases de datos relacionales, pasar a NoSQL tipo column-family como Cassandra
+es relativamente fácil.
+Generación rápida de valor. Time to market
+Existen bases de datos NoSQL como MongoDB que nos permiten empezar con un modelo
+sencillo para realizar un prototipo o MVP (mínimum viable product) y después escalar
+rápidamente a una solución completa. Esto nos favorece el time-to-market de nuevos
+productos y servicios a nuestos clientes. Esto contrasta con las bases de datos
+relacionales, donde el ciclo de desarrollo es más largo.
+Soporte disponible
+Es importante valorar el soporte, y la calidad del mismo, para poder resolver problemas
+de la forma más rápida posible. Valorar portal de soporte, documentación, comunidad de
+desarrolladores- github, commits-, SLAs, publicación de parches, etc.
+Open source vs Software comercial
+La mayoría de bases de datos NoSQL vienen de versiones open source de Apache
+Software Foundation 17, donde la evolución del software es rápida y dirigida por la
+comunidad de desarrolladores. Las versiones comerciales son más estables, con un grado
+de adopción de las versiones de open sources más lento. En la mayoría de los casos no es
+necesario ni recomendable estar en la ultima release.
+
+17
+
+https://www.apache.org/
+
+OBSbusiness.school
+
+34
+
+Partner académico:
+
+Small vendor vs Big vendor y grado de adopción
+Es importante estar al corriente de los analistas que validan a vendors de bases de datos
+NoSQL así como su visión comercial y roadmap de evolución. El último estudio de
+Forrester (Q1 2019) muestra la situación de cada uno de ellos:
+
+También existe un ranking actualizado de ”popularidad” de bases de datos que mantiene
+https://db-engines.com/en/ranking en base a calcular un score por tecnología de base de
+datos. Este score se calcula teniendo en cuenta:
+•
+
+Número de menciones de la base de datos en sitios web, medido como número de
+resultados en consultas de motores de búsqueda (Google, Bing).
+
+•
+
+Interés general en la tecnología. Para esta medición, utilizan la frecuencia de las
+búsquedas en Google Trends.
+
+•
+
+Frecuencia de discusiones técnicas sobre la tecnología de la base de datos. Para
+ello se utiliza la cantidad de preguntas relacionadas y la cantidad de usuarios
+interesados en los conocidos sitios de preguntas y respuestas relacionadas con IT:
+Stack Overflow y DBA Stack Exchange.
+
+•
+
+Número de ofertas de trabajo, en las que se menciona el sistema. Se utiliza la
+cantidad de ofertas en los principales motores de búsqueda de empleo.
+
+OBSbusiness.school
+
+35
+
+Partner académico:
+
+•
+
+Número de perfiles en redes profesionales, en los que se menciona el sistema. Se
+utilizan las redes profesionales más populares internacionalmente: LinkedIn y
+Upwork.
+
+•
+
+Relevancia en las redes sociales. Se contabiliza la cantidad de tweets de Twitter en
+los que se menciona el sistema.
+
+Posibilidades de expansión a Cloud Públcio
+La mayoría de bases de datos NoSQL, por no decir todas, se pueden provisionar en clouds
+públicos: Amazon 18, Microsoft Azzure, Google, IBM Cloud 19.
+
+18
+19
+
+https://aws.amazon.com/nosql/
+https://www.ibm.com/cloud/learn/nosql-databases
+
+OBSbusiness.school
+
+36
+
+Partner académico:
+
+

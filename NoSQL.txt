@@ -1,0 +1,1167 @@
+Jordi Cahué Mestre
+
+Data Lakes
+Bases de datos SQL y NoSQL
+SESIÓN 3
+
+OBSbusiness.school
+
+Partner académico:
+
+Índice
+1.
+
+Base de datos MongoDB ..................................................................................................3
+
+1.1
+
+Introducción..................................................................................................................3
+
+1.2
+
+MongoDB. Jerarquía de datos. ......................................................................................3
+
+1.3
+
+Documentos..................................................................................................................4
+
+1.4
+
+Embedded documents vs Linked documents ..................................................................5
+
+1.5
+
+Metodología para modelizar bases de datos MongoDB ................................................6
+
+1.6
+
+Identificar el tipo de carga ............................................................................................8
+
+1.7
+
+Modelado de relaciones: one-to-one .............................................................................8
+
+1.8
+
+Modelado de relaciones one-to-many ...........................................................................9
+
+1.8.1
+
+Ejemplo 1 con embedding en “one” side .................................................................. 10
+
+1.8.2
+
+Ejemplo 2 con embedding en “many” side ............................................................... 11
+
+1.8.3
+
+Ejemplo 3: Linking documents en la parte “one” side ............................................... 11
+
+1.8.4
+
+Ejemplo 4: Linking documents en la parte “many” side ............................................ 12
+
+1.8.5
+
+Conclusiones del modelado de relaciones one-to-many ........................................... 13
+
+1.9
+
+Modelado de relaciones Many-to-Many ..................................................................... 13
+
+1.9.1
+
+Ejemplo 1: Embedding documents ........................................................................... 14
+
+1.9.2
+
+Ejemplo 2: Linking documents ................................................................................. 15
+
+1.9.3
+
+Conclusiones del modelado de relaciones many-to-many ........................................ 15
+
+1.10
+
+Patrones de diseño: Duplicación ............................................................................. 16
+
+1.11
+
+Patrones de diseño: Caducidad de datos e integridad .............................................. 18
+
+1.12
+
+Patrones de diseño: Patrón Atributo ........................................................................ 18
+
+1.13
+
+Patrones de diseño: subset pattern .......................................................................... 20
+
+1.14
+
+Consultas en MongoDB ........................................................................................... 20
+
+OBSbusiness.school
+
+2
+
+Partner académico:
+
+En este capítulo vamos a estudiar en profundidad un tipo de bases de datos NoSQL:
+MongoDB. MongoDB está considerada líder en el mercado de bases de datos NoSQL,
+tiene un amplio uso y su funcionalidad nos permite construir grandes entornos de Big
+Data orientados a documentos.
+No nos centraremos en el apartado de infraestructura. Daremos una visión más de
+usuario y de la visión de los datos: como modelizar los datos en MongoDB, ilustrando con
+múltiples ejemplos.
+
+El elemento principal en MongoDB es la base de datos. En una base de datos hay una o
+más colecciones. Una colección es un grupo de documentos que hacen referencia a la
+misma entidad. Por ejemplo, una colección de documentos Persona, o una colección de
+documentos Cuenta, o una colección de documentos Contrato. Gráficamente se puede
+ilustrar así:
+
+document
+
+Collection
+
+document
+
+document
+
+Database
+
+Collection
+
+document
+
+document
+
+OBSbusiness.school
+
+3
+
+Partner académico:
+
+Los documentos se escriben en un formato JSON 1: JavaScript Object Notation.
+Esta notación es muy flexible y tiene una serie de cualidades:
+•
+
+Es un formato entendible por los humanos
+
+•
+
+Es fácilmente tratable por las máquinas
+
+•
+
+Es independiente del lenguaje de programación
+
+{
+“nombre”: “Jose”,
+“edad”: 35
+“estado”: “S”,
+“hobbies”: [ “ski”, “ajedrez”, “música”]
+
+field: value
+field: value
+field: value
+field: array of values
+
+}
+
+Inicio – fin de documento
+
+Como se puede apreciar en el gráfico anterior, las reglas para escribir un documento
+JSON son sencillas:
+•
+
+La marca de inicio y fin de documento se denota mediante llaves { }
+
+•
+
+Los campos del documento se escribe con un nombre entre comillas “”, y a
+continuación, separado por : , se escribe el valor del campo, que si es de tipo
+string de especific entre comillas “”, y si es numérico, tal cual.
+
+•
+
+Si un campo es multi-valor, la lista de valores se especifica entre corchetes [ ]
+
+A su vez un documento puede incluir sub-documentos, que los delimitaremos también
+mediante llaves {}
+Esta notación nos permite tener mucha flexibilidad en la definición de documentos, así
+como extender los documentos existentes con nueva información, a medida que esta está
+disponible. Por ejemplo:
+
+1
+
+https://www.json.org/json-en.html
+
+OBSbusiness.school
+
+4
+
+Partner académico:
+
+{
+
+{
+“nombre”: “Jose”,
+“apellido”: “Perez”,
+“edad”: 35,
+“teléfono”: 8888888,
+“dirección”: {
+“calle”: “Avd. Diagonal”,
+“numero”: 200,
+“ciudad”: “Barcelona”,
+“país”: “España”
+}
+
+“nombre”: “Jose”,
+“apellido”: “Perez”,
+“edad”: 35,
+“teléfono”: [ 8888888, 7777777],
+“dirección”: {
+“calle”: “Avd. Diagonal”,
+“numero”: 200,
+“ciudad”: “Barcelona”,
+“país”: “España”
+},
+“educación”: [
+{“colegio”: ”Instituto ABC”,
+“título”: ”Bachillerato” },
+{“colegio”: ”Universidad UPC”,
+“título”: ”Lic. Informática” } ]
+
+}
+
+}
+
+En este ejemplo vemos un documento Persona con una serie de campos. Vemos que
+podemos extender este documento con más información. Por ejemplo, el campo
+“teléfono” de tener un único valor, fácilmente lo convertimos en un campo multi-valor,
+con un array de teléfonos, delimitado por [ ]. Además, vemos ejemplos de subdocumentos, por ejemplo el sub-documento “dirección”, o en el documento extendido,
+un sub-documento adicional que se ha añadido al documento principal, “educación”:
+
+Otra de las características a tener en cuenta en que podemos situar documentos
+embebidos dentro de otros documentos (el caso anterior tiene ejemplos), o podemos
+tener documentos separados y enlazarlos mediante campos que los identifican.
+Estas propiedades nos serán útiles para modelar relaciones y veremos las diferentes
+posibilidades más adelante
+
+Gráficamente lo podemos ilustrar así:
+
+OBSbusiness.school
+
+5
+
+Partner académico:
+
+Documento Persona
+{
+
+Documento Persona
+
+“_id”: <object_id1>
+“nombre”: “Jose”,
+“apellido”: “Perez”,
+“edad”: 35,
+“teléfono”: 8888888,
+“direccion_id”: <object_id2>
+
+{
+“nombre”: “Jose”,
+“apellido”: “Perez”,
+“edad”: 35,
+“teléfono”: 8888888,
+“dirección”: {
+“calle”: “Avd. Diagonal”,
+Embedded sub“numero”: 200,
+“ciudad”: “Barcelona”,
+document
+“país”: “España”
+}
+
+}
+
+Documento Direccion
+
+linked
+document
+
+{
+“_id”: <object_id2>,
+“calle”: “Avd. Diagonal”,
+“numero”: 200,
+“ciudad”: “Barcelona”,
+“país”: “España”
+
+}
+
+}
+
+Ahora que hemos visto la estructura básica de una base de datos MongoDB y cómo se
+escriben los documentos en formato JSON, veamos una metodología que nos permitirá
+diseñar bases de datos MongoDB con una serie de consideraciones que las harán
+eficientes y bien estructuradas.
+Esta metodología consta de tres pasos:
+
+Identificar la carga (Workload):
+En este paso debemos recopilar el máximo de información de como será nuestra carga. Es
+decir, deberemos estimar:
+•
+
+Tamaño de los datos (documentos)
+
+OBSbusiness.school
+
+6
+
+Partner académico:
+
+•
+
+Cuantificar las operaciones (lecturas y escrituras, volúmenes, operaciones por
+segundo)
+
+•
+
+Identificar y Calificar las operaciones:
+•
+
+Consultas
+
+•
+
+Inserciones de nuevos documentos
+
+•
+
+Actualizaciones
+
+•
+
+Borrado de documentos
+
+Mirar las relaciones entre los documentos
+En este paso intentaremos identificar la tipología de relaciones entre los documentos.
+Puedes ser de tres tipos y para cada uno existen técnicas de modelización que veremos
+más adelante:
+•
+
+One-to-one
+
+•
+
+One-to-Many
+
+•
+
+Many-to-Many
+
+Aplicar patrones de diseño
+Una vez se tiene la primera versión del modelo de datos se aplican una serie de
+“recetas”, denominadas patrones de diseño, que permiten dotar a la base de datos de
+mayor eficiencia.
+Como se puede observar, es una metodología simple, que nos permite de forma ágil y
+rápida empezar a modelar el problema, obtener el primer MVP y después iterar hasta
+completar todo el modelo y dotarlo de escalabilidad.
+En todo proceso de modelización de una base de datos documental debemos tener
+siempre en cuenta el equilibrio del modelo de datos:
+
+OBSbusiness.school
+
+7
+
+Partner académico:
+
+La Modelización de Datos debe
+encontrar el equilibrio
+
+Muchos Embedded documents,
+o arrays de documentos muy
+largosà Documentos muy
+grandes à Problemas de
+rendimiento
+
+Muchos Linked documentsà
+muchas Collections à muchas
+escrituras, lecturas/búsquedas
+más complejas à Problemas
+de rendimiento
+
+Este equilibrio lo encontraremos de analizar bien el tipo de carga que deberá soportar la
+bases de datos.
+
+Dado un caso de uso debemos determinar una serie de información que nos condicionará
+el diseño de un modelo de datos eficiente
+•
+
+Entidades que gestionará la aplicación: Películas, Productos, Pedidos, ….
+
+•
+
+Qué volumen de datos tendremos de cada entidad: número de instancias y tamaño
+
+•
+
+Para cada entidad una matriz CRUD 2 (Create, Read, Update, Delete) que refleje
+estas operaciones y cada cuando se producen: operaciones por segundo
+
+•
+
+Determinar que consultas se van a realizar de forma más frecuente por parte de la
+aplicación, y si estas consultas son on-line o analíticas
+
+•
+
+Determinar de cada entidad si hay información consultada frecuentemente de
+aquella que se consulta rara vez.
+
+Las relaciones one-to-one relacionan un documento con otro documento,uno a uno:
+
+2
+
+https://www.codecademy.com/articles/what-is-crud
+
+OBSbusiness.school
+
+8
+
+Partner académico:
+
+Entidad 1
+
+Entidad 2
+
+“one” side
+
+“one” side
+
+cliente
+
+direccion
+
+direccion_envio1
+
+direccion_envio2
+
+Tenemos dos técnicas para modelar estas relaciones:
+1. Embedding documents
+•
+
+En la parte “one” side
+
+•
+
+En la otra parte “one” side
+
+Usualmente se hace en la entidad que es más consultada
+2. Linking documents ( por referencias )
+•
+
+Situar la referencia en la parte “one” side
+
+•
+
+Situar las referencia en la otra parte “one” side
+
+No es usual, a no ser que las entidades se deban consultar por separado.
+
+Este es el tipo de relaciones más habitual:
+
+OBSbusiness.school
+
+9
+
+Partner académico:
+
+Entidad 2
+
+“one” side
+
+“many” side
+
+Persona
+
+Tarjeta crédito
+
+Para modelar estas relaciones, igual como en el caso anterior, conideramos si tenemos
+que hacer embedding o linking:
+1. Embedding documents
+•
+
+En la parte “one” side
+
+•
+
+En la parte “many” side
+
+Usualmente se hace en la entidad que es más consultada
+2. Linking documents ( por referencias )
+•
+
+Situar las referencias en la parte “one” side
+
+•
+
+Situar las referencias en la parte “many” side
+
+Usualmente se sitúan las referencias en la parte “many”
+
+Veamos un ejemplo de películas y críticas. Una película puede terne varias críticas. Si
+consideramos que el número de críticas es relativamente bajo y que la consulta principal
+
+OBSbusiness.school
+
+10
+
+Partner académico:
+
+de la aplicación es de la película junto con sus criticas, deberíamos poner las críticas
+como sub-documentos de película:
+
+película
+
+crítica
+Embedding documents en la parte
+“one” side
+•
+•
+
+“one” side
+
+Número bajo de críticas
+La query principal es consultar la
+película junto con todas sus críticas,
+desde el punto de vista de la
+aplicación
+
+película
+
+critica
+critica
+critica
+
+“many” side
+
+En este ejemplo a una dirección de envío se envían múltiples pedidos formalizados
+mediante una orden. En este caso la orden es el documento importante, donde residen
+todos los detalles del pedido, y es razonable pensar en incrustar también la dirección de
+envío. Esto nos llevará a duplicar la dirección de envío en todas las órdenes de un mismo
+cliente. En este caso no tenemos ningún impacto si la dirección de envío cambia, ya que
+las órdenes ya entregadas se habrán realizado en la dirección anterior, y las nuevas
+órdenes ya llevarán la nueva dirección de envío.
+
+direccion_envio
+
+orden
+
+Embedding documents en la parte
+“many” side
+•
+•
+•
+
+“one” side
+
+Es más habitual
+El documento embebido
+(direccion_envio) se duplica en muchas
+órdenes.
+La duplicación es una opción preferida
+en objetos dinámicos: si la dirección
+cambia, no afecta a las ordenes ya
+enviada, solo a las nuevas
+
+orden
+
+direccion_
+envio
+
+“many” side
+
+En este ejemplo tenemos tiendas distribuidas en diferentes zonas identificadas por
+código postal y queremos saber qué tiendas tiene cada zona.
+
+OBSbusiness.school
+
+11
+
+Partner académico:
+
+codigo_postal
+
+tienda
+codigo_postal
+
+tienda1
+idT: “tienda1”
+
+tienda2
+idT: “tienda2”
+
+tienda3
+
+Tiendas: [“tienda1”,
+“tienda2”, ”tienda3”]
+
+“one” side
+
+idT: “tienda3”
+
+“many” side
+
+Necesitamos poner las referencias de tiendas en el código postal. Para ello, se debe
+incorporar un array de referencia en la parte “one” side.
+Cuando consulto por código postal tengo todas las tiendas localizadas en ese código
+postal. Es lo más eficiente, si la aplicación requiere este tipo de consulta.
+Sin embargo, se debe considerar que MongoDB no soporta el borrado en cascada. SI
+borramos una tienda, la aplicación tiene que eliminar del array de código postal la
+referencia a la tienda. Esta es una tarea delegada a la aplicación, no la hace de forma
+automática el motor de la base de datos.
+
+Veamos el mismo ejemplo del punto anterior pero al revés:
+codigo_postal
+
+tienda
+codigo_postal
+
+tienda1
+
+idCP: “codPos1”
+
+cp: “codPos1”
+
+tienda2
+cp: “codPos1”
+
+tienda3
+cp: “codPos1”
+
+“one” side
+
+“many” side
+
+En este caso situamos la referencia de código postal en cada tienda.
+•
+
+Es la opción preferida cuando usamos referencias en relaciones one-to-many
+
+•
+
+Si borro una tienda, no hay necesidad de gestionar desde la aplicación la
+actualización de otros documentos.
+
+OBSbusiness.school
+
+12
+
+Partner académico:
+
+•
+
+Pero: No tengo la query directa por código postal, tengo que hacer un scan de la
+colección de tiendas para saber las que están en un código postal concreto, puede
+ser una consulta lenta. Todo dependerá de las necesidades de la aplicación.
+
+A continuación se muestran una serie de consideraciones en el modelado de relaciones
+one-to-many:
+•
+
+La duplicación de objetos en la parte “many” es deseable, para tener
+rendimiento. Una de las características de las bases de datos NoSQL es la
+desnormalización.
+
+•
+
+Por simplicidad, es preferible la técnica de embedding frente a la de
+referencias, y siempre que el número de documentos sea bajo.
+
+•
+
+Aplicar técnica de embedding en los documentos que se consultan más, ya
+sean de la parte “one” o de la parte “many”
+
+•
+
+Prestar atención a poner referencias cuando se diseñan las operaciones de
+borrado de documentos.
+
+•
+
+Es preferible aplicar la técnica de referencias en aquellos documentos que no
+se necesitan habitualmente en las consultas.
+
+Las relaciones Many-to-Many se dan también con frecuencia, aunque muchas veces de
+pueden llegar a modelar como relaciones one-to-many. Para entender este tipo de
+relaciones mejor veamos un ejemplo:
+
+Entidad 1
+
+Entidad 2
+
+“many” side
+
+“many” side
+
+OBSbusiness.school
+
+13
+
+Tienda
+
+Producto
+
+“many” side
+
+“many” side
+
+Partner académico:
+
+Una tienda vende productos de diferentes tipos, por ejemplo la “Tienda 1” vende “Café”,
+“Leche” y “Chocolate”, y la “Tienda 2” vende “Manzanas”, “Refrescos”, “Leche”” y
+“Chocolate”. Ahora, si vemos los productos, nos encontramos con algunos de ellos que se
+venden en varias tiendas, por ejemplo la “Leche” se vende en la “Tienda 1” y en la
+“Tienda 2”, y el chocolate se vende también en la “Tienda 1” y en la “Tienda 2”.
+Para modelizar este tipo de relaciones, igual como en los casos anteriores, podemos
+optar por cualquiera de las partes “many” y por las técnicas de embedding o linking.
+1. Embedding documents
+•
+
+Array de sub-documentos en la parte “many” side
+
+•
+
+Array de sub-documentos en la otra parte “many” side
+
+2. Linking documents ( por referencias )
+•
+
+Array de referencias en la parte “many” side
+
+•
+
+Array de referencias en la otra parte “many” side
+
+En ambos casos, usualmente se hace en la entidad que es más consultada
+Veamos algunos ejemplos:
+
+El ejemplo es un carrito de la compra de una aplicación web, tipo Amazon. En el carrito
+de la compra tengo los ítems (productos) que voy a comprar:
+
+carrito
+
+item
+item
+item
+item
+
+item
+item
+item
+item
+
+En este caso:
+
+OBSbusiness.school
+
+14
+
+Partner académico:
+
+•
+
+Los documentos de la parte que se consulta menos son los que se embeden en la
+parte que se consulta más. En el ejemplo, el carrito de la compra
+
+•
+
+En este caso se duplica la información
+
+•
+
+Se conservan los documentos que se embeden en una colección separada. En el
+ejemplo, la colección de ítems, ya que estos ítems pueden formar parte de otros
+carritos, con lo que hay que conservarlos para copiarlos.
+
+Si volvemos al ejemplo inicial de tiendas y procuctos, tenemos dos opciones:
+
+Opción 1
+producto
+
+Opción 2
+tienda
+
+item
+item
+tienda3
+idT: “tienda3”
+
+item
+item
+producto3
+idP “prod3”
+
+Tiendas: [“tienda1”,
+“tienda2”, ”tienda3”]
+
+Productos: [“prod1”,
+“prod2”, ”prod3”]
+
+Opción 1: En producto situar un array de referencias a tiendas
+Opción 2: En tienda situar un array de referencias a productos
+En qué parte debemos poner el array?
+•
+
+Debemos considerar las operaciones de consulta e inserción: Añadir un producto
+es una operación más habitual que añadir una tienda, y parece lógico pensar que
+se quiere una consulta de los productos que se venden en una tienda en
+particular. En este caso la opción 2 es más adecuada.
+
+A continuación se muestran una serie de consideraciones en el modelado de relaciones
+one-to-many:
+
+OBSbusiness.school
+
+15
+
+Partner académico:
+
+•
+
+Algunas relaciones many-to-many se pueden simplificar en relaciones one-to-many
+
+•
+
+En algunos casos es posible traducir una relación many-to-many en dos one-tomany, de forma equivalente a como se hace en los modelos de bases de datos
+relacionales
+
+•
+
+Es preferible hacer embedding de aquellos documentos que cambian poco, así
+sacamos ventaja de la duplicación.
+
+•
+
+En el caso de que haya muchos documentos relacionados, puede ser preferible la
+opción de arrays de referencias
+
+En las bases de datos NoSQL se tiende a desnormalizar los datos, a diferencia de las bases
+de datos relacionales o tabulares.
+Por tanto, la Duplicación es correcta si cuando modificamos el sub-documento, los
+documentos anteriores no se ven afectados. Ejemplo dirección de envío en ordenes de
+compra. Las órdenes pasadas ya se han enviado, las ordenes nuevas pueden tener otra
+dirección:
+
+orden_1
+
+orden_2
+
+orden_3
+
+direccion_
+envio_1
+
+direccion_
+envio_1
+
+direccion_
+envio_2
+
+Órdenes pasadas
+
+orden nueva
+
+Si lo vemos en formato JSON:
+
+OBSbusiness.school
+
+16
+
+Partner académico:
+
+{ // order
+date: “2009-02-14”,
+status:”delivered”,
+customer_id: “12345”,
+items: [
+{ item_id:”B000HC2LI0”,
+quantity: 2 }
+]
+}
+{ // customer
+_id: “12345”,
+since: “2017-01-20”,
+address: {
+street: “Paradise Point”,
+state: ”HI”,
+contry: “USA”
+}
+}
+
+Duplicación es correcta cuando los cambios en los sub-documentos no tienen efecto o es
+mínimo. Por ejemplo, una película una vez estrenada, los actores del reparto no cambian.
+
+Pelicula_1
+
+Pelicula_2
+
+Pelicula_3
+
+actor
+actor
+actor
+
+actor
+actor
+
+actor
+actor
+actor
+actor
+actor
+
+En formato JSON:
+
+OBSbusiness.school
+
+17
+
+Partner académico:
+
+Podemos encontrarnos con dos tipos de problemas:
+•
+
+Caducidad de datos. Podemos tener documentos con campos cuyos valores hayan
+caducado, por ejemplo “precio”, “asiento_disponible”.
+
+•
+
+Integridad de datos. En MondoDB no tenemos borrado en cascada. Si borramos un
+documento, tenemos que borrar su referencia de todos los documentos que lo
+referencian. Del mismo modo, si actualizamos un sub-documento que tenemos
+duplicado en otros, tenemos que hacer la actualización en todos.
+
+Para resolver estos problemas podemos aplicar un serie de “recetas”:
+•
+
+Actualizaciones en modo batch, para revisar la coherencia de todos los
+documentos y corregir aquellos que hayan quedado desactualizados
+
+•
+
+Registrar cambios en los documentos en un stream para aplicarlos a toda la base
+de datos.
+
+•
+
+La duplicación puede ayudar en mantener integridad. El caso de “precio” seria
+parecido al de la dirección de envío. Lo deberíamos duplicar en las ordenes.
+Ordenes pasadas tendrán su precio, ordenes nuevas tendrán en precio
+actualizado.
+
+•
+
+Aplicar transacciones multi-documento 3 (es una característica de MongoDB)
+
+Veamos un ejemplo de documentos Producto donde podemos apreciar que disponen de
+muchos atributos:
+
+3
+
+https://docs.mongodb.com/manual/core/transactions/
+
+OBSbusiness.school
+
+18
+
+Partner académico:
+
+En este caso necesitaremos hacer búsquedas eficientes por características del producto,
+con lo que deberemos crear índices para cada atributo: color, size, input, output,
+capacity, container, ….. Podemos llegar a tener muchos índices!
+Este patrón consiste en agrupar atributos y estructurarlos para que sean indexados
+todos por el mismo índice. ¿Cómo podemos hacer esto?. Podemos rescribir el ejemplo de
+la siguiente forma:
+
+OBSbusiness.school
+
+19
+
+Partner académico:
+
+Ahora, podemos crear un único índice por “add_specs.k” y “add_specs.v”, Y además.
+podemos añadir un tercer campo para cualificar el valor, por ejemplo las unidades.
+
+MongoDB trabaja con una cache en memoria para agilizar el acceso a la información. Esta
+memoria es limitada, y cuando está llena, MongoDB se ve obligado a acceder a disco para
+refrescar el contenido cuando recibe nuevas peticiones de búsqueda.
+Interesa que la memoria cache siempre tenga la información más solicitada
+Para ello, deberíamos analizar los documentos y las consultas, y separar la información
+más solicitada de aquella que rara vez se accede, y separarla en colecciones.
+
+cache
+
+1 colección
+
+2 colecciones
+
+referencia
+
+Información
+accedida con
+más frecuencia
+
+Información
+poco
+consultada
+
+Una vez tengo diseñada la bases de datos y aplicados los diferentes patrones de diseño,
+¿Cómo consulto la bases de datos?. No es intención de este documento hacer un repaso
+exhaustivo 4 de las diferentes construcciones que nos permite consultar documentos, solo
+dar una pincelada de cual es la filosofía que se sigue:
+
+4
+
+: https://docs.mongodb.com/manual/tutorial/query-documents/
+
+OBSbusiness.school
+
+20
+
+Partner académico:
+
+En MongoDB la consulta se construye con otro documento que indica las condiciones de
+filtrado.
+Imaginemos que partimos de una colección de inventario con múltiples documentos. Los
+documentos de inventario tienen diferentes estados y cantidades:
+Collection inventory
+{ // inventory doc
+….
+status: “D”,
+qty:30,
+….
+}
+
+{ // inventory doc
+….
+status: “A”,
+qty:15,
+….
+}
+
+{ // inventory doc
+….
+status: “A”,
+qty:50,
+….
+}
+
+Veamos una analogía de como hacer consultas en MongoDB y su equivalente en SQL
+
+Query en MongoDB
+
+Query en SQL
+
+db.inventory.find( {} )
+
+SELECT * FROM inventory
+
+db.inventory.find( { status: "D" } )
+
+SELECT * FROM inventory WHERE
+status = "D"
+
+db.inventory.find( { status: { $in: [ "A", "D" ] } } )
+
+SELECT * FROM inventory WHERE
+status in ("A", "D")
+
+db.inventory.find( { status: "A", qty: { $lt: 30 } } )
+
+SELECT * FROM inventory WHERE
+status = "A" AND qty < 30
+
+db.inventory.find( { $or: [ { status: "A" }, { qty: { $lt: 30 }
+
+SELECT * FROM inventory WHERE
+
+}]})
+
+status = "A" OR qty < 30
+
+OBSbusiness.school
+
+21
+
+Partner académico:
+
+$in, $lt, $or, … son palabras reservadas. $lt significa “less than”.
+Si queremos hacer queries en documentos embedded:
+
+{ // inventory doc
+….
+status: “D”,
+qty:30,
+….
+size : {
+h:14,
+w:21 }
+}
+
+•
+
+Queries en documentos embedded
+
+db.inventory.find( { size: { h: 14, w: 21} } )
+•
+
+O también con notación campo.campo
+
+db.inventory.find( { size.h: 14, size.w: 21} )
+
+O si necesitamos hacer una query en un array:
+{ // inventory doc
+….
+status: “D”,
+qty:30,
+….
+size : {
+h:14,
+w:21 },
+…
+tags: [“red”, “white”, “black”]
+}
+
+•
+
+Para consultar un array. En el ejemplo, todos aquellos
+documentos que contengan “red” y “”black”en el array
+de tags
+
+db.inventory.find( { tags: { $all: ["red", "black"] } } )
+
+Y si necesitamos hacer joins de documentos de diferentes colecciones, se utiliza la
+construcción: $lookup
+
+{
+
+$lookup:
+{
+from: <collection to join>,
+localField: <field from the input documents>,
+foreignField: <field from the documents of the "from" collection>,
+as: <output array field>
+}
+
+}
+
+OBSbusiness.school
+
+22
+
+Partner académico:
+
+
