@@ -1,4 +1,4 @@
-
+--clase 1
 --ejemplo: crear nuestra primera tabla
 create table mitabla (nombre varchar(20), edad int, fecha_nacimiento date)
 --borrar tabla 
